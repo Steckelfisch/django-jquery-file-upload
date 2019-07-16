@@ -36,3 +36,21 @@ def serialize(instance, file_attr='file'):
     }
 
 
+def serialize_sound(instance, file_attr='audio_file'):
+    """serialize -- Serialize a Sound instance into a dict.
+
+    instance -- Sound instance
+    file_attr -- attribute name that contains the FileField or ImageField
+
+    """
+    obj = getattr(instance, file_attr)
+    return {
+        'url': obj.url,
+        'name': order_name(obj.name),
+        'type': mimetypes.guess_type(obj.path)[0] or 'audio/vnd.wav',
+        'thumbnailUrl': obj.url,
+        'size': obj.size,
+        'deleteUrl': reverse('upload-sound-delete', args=[instance.pk]),
+        'deleteType': 'DELETE',
+    }
+
