@@ -49,13 +49,16 @@ def upload_js():
         <td>
             <span class="preview">
                 {% if (file.thumbnailUrl) { %}
-                    <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" data-gallery><img src="{%=file.thumbnailUrl%}"></a>
+                    <a href="{%=file.imgUrl%}" title="{%=file.name%}" download="{%=file.imgUrl%}" data-gallery>
+                      <img src="{%=file.thumbnailUrl%}">
+                    </a>
+                    <audio src="http://127.0.0.1:8000{%=file.url%}" controls="" autostart="0" autostart="false" preload ="none"></audio>
                 {% } %}
             </span>
         </td>
         <td>
             <p class="name">
-                <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" {%=file.thumbnailUrl?'data-gallery':''%}>{%=file.name%}</a>
+                <a href="{%=file.imgUrl%}" title="{%=file.name%}" download="{%=file.url%}" {%=file.thumbnailUrl?'data-gallery':''%}>{%=file.name%}</a>
             </p>
             {% if (file.error) { %}
                 <div><span class="label label-important">{%=locale.fileupload.error%}</span> {%=file.error%}</div>

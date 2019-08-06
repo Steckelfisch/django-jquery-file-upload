@@ -36,7 +36,7 @@ def serialize(instance, file_attr='file'):
     }
 
 
-def serialize_sound(instance, file_attr='audio_file'):
+def serialize_sound(instance, file_attr='file'):
     """serialize -- Serialize a Sound instance into a dict.
 
     instance -- Sound instance
@@ -48,9 +48,10 @@ def serialize_sound(instance, file_attr='audio_file'):
         'url': obj.url,
         'name': order_name(obj.name),
         'type': mimetypes.guess_type(obj.path)[0] or 'audio/vnd.wav',
-        'thumbnailUrl': obj.url,
+        'imgUrl': obj.url+'.png',
+        'thumbnailUrl': obj.url+'.thumbnail.png',
         'size': obj.size,
-        'deleteUrl': reverse('upload-sound-delete', args=[instance.pk]),
+        'deleteUrl': reverse('session-sound-delete', args=[instance.session_id, instance.pk]),
         'deleteType': 'DELETE',
     }
 
