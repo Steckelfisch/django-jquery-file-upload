@@ -2,7 +2,7 @@
 import json
 
 from django.http import HttpResponse
-from django.views.generic import CreateView, DeleteView, ListView
+from django.views.generic import CreateView, DeleteView, ListView, FormView
 from .models import Sound
 from .response import JSONResponse, response_mimetype
 from .serialize import serialize_sound
@@ -13,17 +13,17 @@ logger = logging.getLogger(__name__)
 
 class SessionSoundCreateView(CreateView):
     model = Sound
-    # fields = "__all__"
-    fields = ['file']
+    fields = ['file']  # = "__all__"
 
     def form_valid(self, form):
         self.object = form.save()
-        self.object.session_id = self.kwargs['session_pk']  # pak session_pk
+        self.object.session_id = self.kwargs['session_pk']  # verbind aan sessie
         self.object.save()
+        # Batmusic Processing
         self.object.move_to_session_dir()
-        img_path = self.object.create_spectrogram()
+        self.object.create_spectrogram()
         self.object.create_thumbnail()
-        logger.debug("spectrogram: "+img_path)
+        # Response building
         files = [serialize_sound(self.object)]
         data = {'files': files}
         response = JSONResponse(data, mimetype=response_mimetype(self.request))
@@ -41,6 +41,13 @@ class SessionSoundCreateView(CreateView):
 
 #class jQueryVersionSoundCreateView(SessionSoundCreateView):
 #    template_name_suffix = '_jquery_sound_form'
+
+# from .forms import SessionSoundArchiveUploadForm
+#class SessionSoundArchiveView(FormView):
+#    form_class = SessionSoundArchiveUploadForm
+
+#    def form_valid(self, form):
+#    return Re
 
 
 class SessionSoundDeleteView(DeleteView):

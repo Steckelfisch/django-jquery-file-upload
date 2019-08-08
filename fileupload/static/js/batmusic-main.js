@@ -76,7 +76,7 @@ $(function () {
             // Uncomment the following to send cross-domain cookies:
             //xhrFields: {withCredentials: true},
             //url: $('#fileupload').fileupload('option', 'url'),
-            url: '/upload/session/'+session_id+'/sound/',
+            url: '/batmusic/session/'+session_id+'/sound/',
             dataType: 'json',
             context: $('#fileupload')[0]
         }).always(function () {

@@ -146,7 +146,6 @@ class Picture(models.Model):
         super(Picture, self).delete(*args, **kwargs)
 
 
-
 class Sound(models.Model):
     '''
     check: http://stackoverflow.com/questions/6194901/django-audio-file-validation
@@ -164,7 +163,7 @@ class Sound(models.Model):
     alias = models.CharField(max_length=200, default='Landcode_LocAfk_ProjAfk_YR_Afk_NightNr_InNightIndex')
     # Landcode_LocatieAfkorting_Project_Afk_Nachtnummer_VolgnummerInNacht
 
-    file = models.FileField(max_length=512, upload_to='tmp') # +str(session_id))
+    file = models.FileField(max_length=512, upload_to='tmp')
 
     original_filename = models.CharField(_('Org. Filename'), max_length=100,
                                          null=True, blank=True)
@@ -192,7 +191,7 @@ class Sound(models.Model):
         return str(self.session)+'-['+str(self.recording_date_time)+']'
 
 
-    media_dir = "/home/braas/projects/jquery_upload/django-jquery-file-upload/django-jquery-file-upload/media"
+    media_dir = "/home/braas/projects/jquery_upload/django-jquery-file-upload/media"
     # session_dir = "/home/braas/projects/jquery_upload/django-jquery-file-upload/media"
 
 
@@ -220,8 +219,8 @@ class Sound(models.Model):
         img_path_file = (str(self.file)+'.png')  # .lower()
 
         sox_command = "{0} '{1}' -n spectrogram -m -o '{2}'".format(settings.SOX_CMD,
-                                                                     os.path.join(self.media_dir, str(self.file)),
-                                                                     os.path.join(self.media_dir, img_path_file))
+                                                                    os.path.join(self.media_dir, str(self.file)),
+                                                                    os.path.join(self.media_dir, img_path_file))
 
         logger.debug(sox_command)
 
@@ -240,3 +239,37 @@ class Sound(models.Model):
             error_msg = "Unable to load image : {0} msg: {1}".format(str(self.file),
                                                                      str(e))
             logger.error( error_msg )
+
+class SoundArchive(models.Model):
+    session = models.ForeignKey(BatMusicSession, on_delete=models.CASCADE, null=True, blank=True)
+    file = models.FileField(_('Archive File'),
+                            max_length=512, upload_to='tmp')
+    # status
+    # logging
+
+
+
+    def __str__(self):
+        # loc_tz =  pytz.timezone('Europe/Amsterdam') # timezone from Location
+        # return str(self.session)+'-['+str(self.recording_date_time.astimezone(loc_tz))+']'
+        # fmt = '%Y-%m-%d %H:%M:%S %Z%z'
+        return str(self.session)+'-['+str(self.file)+']'
+
+    media_dir = "/home/braas/projects/jquery_upload/django-jquery-file-upload/media"
+
+    def move_to_session_dir(self):
+        # os.makedirs(self.session_dir, exist_ok=True)
+        # session_data_dir = os.path.join(str(self.session_id), settings.DATA_DIR)
+        relative_processed_data_dir = os.path.join(settings.SESSION_DATA_DIR,
+                                                   str(self.session_id),
+                                                   settings.UNPROCESSED_DATA_DIR)
+        dest_dir = os.path.join(self.media_dir, relative_processed_data_dir)
+        os.makedirs(dest_dir, exist_ok=True)
+        wav_file_basename = os.path.basename(str(self.file))
+        logger.debug('dest_dir: '+dest_dir)
+        shutil.move(os.path.join(self.media_dir, str(self.file)),
+                    dest_dir)
+
+        self.file.name = os.path.join(relative_processed_data_dir, wav_file_basename)
+        logger.debug("File Name:"+self.file.name)
+        self.save()

@@ -7,8 +7,8 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = [
-    path('', lambda x: HttpResponseRedirect('/upload/new/')),
-    path('upload/', include('fileupload.urls')),
+    path('', lambda x: HttpResponseRedirect('/batmusic/new/')),
+    path('batmusic/', include('fileupload.urls')),
     path('admin/', admin.site.urls),
 ]
 
