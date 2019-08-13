@@ -5,8 +5,12 @@ import os, shutil
 from subprocess import call
 from PIL import Image
 
+from timezone_field import TimeZoneField
+from timezonefinder import TimezoneFinder
+
 from django.conf import settings
-from django.db import models
+# from django.db import models
+from django.contrib.gis.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
@@ -55,13 +59,72 @@ SESSION_STATUS_CHOICES = (
     #(SESSION_CLOSED, ""Session ready for Publication" ),
     (SESSION_PUBLIC, "Session Published" ),
 )
-SESSION_STATUS_FILTER_CHOICES = SESSION_STATUS_CHOICES
+# SESSION_STATUS_FILTER_CHOICES = SESSION_STATUS_CHOICES
 SESSION_STATUS_FILTER_CHOICES = (
     ('', "All Sessions"),
     (SESSION_OPEN,   "Session under Development" ),
     #(SESSION_CLOSED, "Session ready for Publication" ),
     (SESSION_PUBLIC, "Session Published" ),
 )
+
+
+class Location(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    geometry = models.PointField(srid=4326, blank=True)
+    timezone = TimeZoneField(blank=True, null=True)
+    name = models.CharField(max_length=50, unique=True)
+    name_abr = models.CharField('Location Abrivation', max_length=10, unique=True)
+    description = models.CharField(max_length=200)
+
+    # country_code = CountryField('Country', blank=True) # twee hoofdletters volgens ISO 3166-1 alfa2
+    # country (volgt uit geometry?)
+    # stateProvince (volgt uit geometry?)
+    # county (volgt uit geometry?)
+    # city (volgt uit geometry?)
+
+    # habitat
+    # structure
+    # determination (hoe zijn de coordinaten bepaald)
+    # remarks
+
+    # 'djgeojson' wants geom instead of geometry
+    def _geom(self):
+        return self.geometry
+    geom = property(_geom)
+
+    def _session_count(self, status=None):
+        return BatMusicSession.objects.filter(location=self).count()
+    session_count = property(_session_count)
+
+    class Meta:
+        verbose_name = "Location"
+        verbose_name_plural = "Locations"
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        tf = TimezoneFinder()
+        self.timezone = tf.timezone_at(lng=self.geometry.coords[0], lat=self.geometry.coords[1])
+        super(Location, self).save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse('location-detail', kwargs={'pk': self.pk})
+
+    def _absolute_url(self):
+        return self.get_absolute_url()
+    absolute_url = property(_absolute_url)
+
+    def get_osm_tile_url(self, zoom=15):
+        #zoom = 15 #16
+        x, y = deg2num(self.geometry.y, self.geometry.x, zoom)
+        #sub_domain = ['1', '2', '3']
+        #return 'http://otile'+random.choice(sub_domain)+'.mqcdn.com/tiles/1.0.0/osm/'+str(zoom)+'/'+str(x)+'/'+str(y)+'.jpg'
+        sub_domain = ['a', 'b', 'c']
+        return '//'+random.choice(sub_domain)+'.tile.openstreetmap.org/'+str(zoom)+'/'+str(x)+'/'+str(y)+'.png'
+
+    def get_osm_tile_preview_url(self):
+        return self.get_osm_tile_url(zoom=13)
 
 
 class BatMusicSession(models.Model):
@@ -94,7 +157,7 @@ class BatMusicSession(models.Model):
     # if false, Batmusic will apply DST correction when processing the uploaded data
     daylight_saving_correction = models.BooleanField(_('DST Correction Applied (by user)'), default=False)
 
-    # location = models.ForeignKey('Location', on_delete=models.SET_NULL, null=True)
+    location = models.ForeignKey('Location', on_delete=models.SET_NULL, null=True)
 
     # creation_date_time = models.DateTimeField(auto_now_add=True)
     last_upload_trigger_date_time = models.DateTimeField(_('Last time Files have been uploaded'),

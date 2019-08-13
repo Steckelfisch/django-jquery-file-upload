@@ -3,7 +3,9 @@ import json
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, reverse
-from django.views.generic import CreateView, UpdateView, ListView,DetailView
+from django.views.generic import CreateView, UpdateView, ListView, DetailView, FormView
+from django.views.generic.detail import SingleObjectMixin
+from django.views.generic import FormView
 from .models import BatMusicSession
 from .response import JSONResponse, response_mimetype
 from .serialize import serialize_sound
@@ -45,3 +47,24 @@ class SessionUpdateView(UpdateView):
 
     def get_success_url(self):
         return reverse('session-update', kwargs={'pk': self.object.id})
+
+class SessionLocationRecorderView(SingleObjectMixin, FormView):
+    model = BatMusicSession
+
+
+class SessionLocationRecorderUpdateView(UpdateView):
+    model = BatMusicSession
+    fields = ['location',
+              # 'recorder' ,
+              'recorder_text']
+    template_name = 'fileupload/location_recorder_form.html'
+
+    def get_success_url(self):
+        return reverse('session-location-recorder', kwargs={'pk': self.object.id})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['session_pk'] = self.object.id #  self.kwargs['pk']
+        return context
+
+

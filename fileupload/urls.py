@@ -12,6 +12,7 @@ from fileupload.views import (
 # from fileupload.sound_views import SoundCreateView, SoundDeleteView, SoundListView
 from fileupload.session_sound_views import SessionSoundCreateView, SessionSoundDeleteView, SessionSoundListView
 from fileupload.session_views import SessionCreateView, SessionUpdateView, SessionListView
+from fileupload.session_views import SessionLocationRecorderView, SessionLocationRecorderUpdateView
 from fileupload.session_sound_archive_views import SoundArchiveCreateView
 
 urlpatterns = [
@@ -25,6 +26,10 @@ urlpatterns = [
 
     path('session/new/', login_required(SessionCreateView.as_view()), name='session-new'),
     path('session/<int:pk>/', SessionUpdateView.as_view(), name='session-view'),
+    path('session/<int:pk>/location-recorder-old/',
+         login_required(SessionLocationRecorderView.as_view()), name='session-location-recorder-old'),
+    path('session/<int:pk>/location-recorder/',
+         login_required(SessionLocationRecorderUpdateView.as_view()), name='session-location-recorder'),
     path('session/<int:pk>/update/', login_required(SessionUpdateView.as_view()), name='session-update'),
     path('session/', SessionListView.as_view(), name='session-list'),
 
@@ -33,7 +38,8 @@ urlpatterns = [
          login_required(SessionSoundDeleteView.as_view()),
          name='session-sound-delete'),
     # path('session/<int:session_pk>/sound-archive-upload/', SessionSoundArchiveView.as_view(), name='session-sound-archive'),
-    path('session/<int:session_pk>/sound-archive-upload/', SoundArchiveCreateView.as_view(), name='session-sound-archive'),
+    path('session/<int:session_pk>/sound-archive-upload/', SoundArchiveCreateView.as_view(),
+         name='session-sound-archive-new'),
     path('session/<int:session_pk>/sound/', SessionSoundListView.as_view(), name='session-sound-list-view'),
 
     #path('sound/new/', SoundCreateView.as_view(), name='upload-sound'),

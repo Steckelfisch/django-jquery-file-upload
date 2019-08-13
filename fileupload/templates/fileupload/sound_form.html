@@ -5,9 +5,10 @@
 <div class="container">
     <h1>Batmusic Upload Demo</h1>
     <ul class="nav nav-tabs">
-        <li class=""><a href="{% url 'session-update' session_pk %}">Batmusic Session</a></li>
-        <li class="active"><a href="{% url 'session-sound-new' session_pk  %}">Sound (Upload)</a></li>
-        <li class=""><a href="{% url 'session-sound-archive' session_pk  %}">SoundArchive Upload</a></li>
+         <li class=""><a href="{% url 'session-update' session_pk %}">Batmusic Session</a></li>
+         <li class=""><a href="{% url 'session-location-recorder' session_pk  %}">Location</a></li>
+         <li class="active"><a href="{% url 'session-sound-new' session_pk  %}">Sound (Upload)</a></li>
+         <li class=""><a href="{% url 'session-sound-archive-new' session_pk  %}">SoundArchive Upload</a></li>
     </ul>
     <br>
     <blockquote>

@@ -57,6 +57,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
+
+    'timezone_field',
 
     'debug_toolbar',
 
@@ -94,6 +97,7 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.static',
                 'django.contrib.messages.context_processors.messages',
             ],
         },
@@ -108,7 +112,7 @@ WSGI_APPLICATION = 'django-jquery-file-upload.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
+        'ENGINE': 'django.contrib.gis.db.backends.spatialite',  # 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db'),
     }
 }

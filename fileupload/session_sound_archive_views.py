@@ -12,13 +12,15 @@ class SoundArchiveCreateView(CreateView):
     fields = ['file']
 
     def get_success_url(self):
-        return reverse('session-sound-archive', kwargs={'session_pk': self.object.id})
+        return reverse('session-sound-archive-new', kwargs={'session_pk': self.object.session_id})
 
     def form_valid(self, form):
-        self.object = form.save()
+        self.object = form.save(commit=False)
         self.object.session_id = self.kwargs['session_pk']  # verbind aan sessie
         self.object.save()
+
         # Batmusic Processing
+        # moet hier weg. Is geen object noodzakelijkheid, maar functionaliteit van de view
         self.object.move_to_session_dir()
 
         return HttpResponseRedirect(self.get_success_url())
