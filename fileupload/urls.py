@@ -16,6 +16,7 @@ from fileupload.session_views import SessionLocationRecorderView, SessionLocatio
 from fileupload.session_sound_archive_views import SoundArchiveCreateView
 
 urlpatterns = [
+
     path('basic/', BasicVersionCreateView.as_view(), name='upload-basic'),
     path('basic/plus/', BasicPlusVersionCreateView.as_view(), name='upload-basic-plus'),
     path('new/', PictureCreateView.as_view(), name='upload-new'),

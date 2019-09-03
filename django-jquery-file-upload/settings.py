@@ -123,7 +123,7 @@ DATABASES = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Europe/Oslo'
+TIME_ZONE = 'Europe/Amsterdam'
 
 USE_I18N = True
 

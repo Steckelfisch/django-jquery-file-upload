@@ -6,7 +6,7 @@
     <h1>Batmusic Upload Demo</h1>
     <ul class="nav nav-tabs">
         <li class=""><a href="{% url 'session-update' session_pk %}">Batmusic Session</a></li>
-         <li class=""><a href="{% url 'session-location-recorder' session_pk %}">Location</a></li>
+         <li class=""><a href="{% url 'session-location-recorder' session_pk %}">Location/Recorder</a></li>
         <li class=""><a href="{% url 'session-sound-new' session_pk %}">Sound (Upload)</a></li>
         <li class="active"><a href="{% url 'session-sound-archive-new' session_pk %}">SoundArchive Upload</a></li>
     </ul>
@@ -71,7 +71,7 @@
 <!-- Bootstrap JS is not required, but included for the responsive demo navigation -->
 <script src="/static/js/bootstrap.min.js"></script>
 
-<script src="/static/js/batmusic-main.js"></script>
+<!-- script src="/static/js/batmusic-main.js"></script -->
 <script src="/static/js/locale.js"></script>
 <script src="/static/js/csrf.js"></script>
 <!-- The XDomainRequest Transport is included for cross-domain file deletion for IE8+ -->
